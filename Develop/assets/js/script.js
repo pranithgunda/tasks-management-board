@@ -1,6 +1,3 @@
-// Retrieve tasks and nextId from localStorage
-let taskList = JSON.parse(localStorage.getItem("tasks"));
-let nextId = JSON.parse(localStorage.getItem("nextId"));
 // Get reference to Save button on Add Task Modal Dialog
 const saveTaskButtonEl = $('#add-tasks');
 // Get reference of close icon from modal dialog

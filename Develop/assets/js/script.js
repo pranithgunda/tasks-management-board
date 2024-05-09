@@ -4,31 +4,114 @@ let nextId = JSON.parse(localStorage.getItem("nextId"));
 // Get reference to Save button on Add Task Modal Dialog
 const saveTaskButtonEl = $('#add-tasks');
 
-// Todo: create a function to generate a unique task id
+// function to generate a unique task id
 function generateTaskId() {
     // Generate ID by appending unique timestamp
-    return "ID-"+new Date().getTime();
+    return "ID-" + new Date().getTime();
 }
 
-// Todo: create a function to create a task card
+// function to create a task card
 function createTaskCard(task) {
+    // create div for card
+    const cardEl = $('<div>');
+
+    const dueDate = dayjs(task.dueDate).format('YYYY-MM-DD')
+    const currentDate = dayjs().format('YYYY-MM-DD')
+    const taskStatus = task.status;
+    let cardElClass = '';
+
+    // Set card class based on dueDate and task status
+    if(dueDate < currentDate){
+        if(taskStatus === 'done'){
+            cardElClass ='card text-dark text-center bg-light mb-3 task-card'
+        }else{
+            cardElClass = 'card text-dark text-center bg-danger mb-3 task-card'
+        }
+    }else if(dueDate === currentDate){
+        if(taskStatus === 'done'){
+            cardElClass = 'card text-dark text-center bg-light mb-3 task-card'
+        }else{
+            cardElClass = 'card text-dark text-center bg-warning mb-3 task-card'
+        }
+    }else{
+        cardElClass = 'card text-dark text-center bg-light mb-3 task-card'
+    }
+
+    cardEl.addClass(`${cardElClass}`);
+
+    // Add generated id as a data attribute to task
+    cardEl.attr('data-id',task.id);
+
+    // Create div for Card Header
+    const cardHeaderEl=$('<div>');
+    cardHeaderEl.addClass('card-header');
+    cardHeaderEl.text(task.title);
+
+    // Append Card Header to Card
+    cardEl.append(cardHeaderEl);
+
+    // Create div for Card Body
+    const cardBodyEl = $('<div>');
+    cardBodyEl.addClass('card-body');
+
+    // Create Paragraph for Due Date
+    const pElDate = $('<p>');
+    pElDate.addClass('card-text');
+    pElDate.text(task.dueDate);
+
+    // Append Paragraph element to Card Body to display task Due Date
+    cardBodyEl.append(pElDate);
+
+    // Create Paragraph for task description
+    const pElDesc = $('<p>');
+    pElDesc.addClass('card-text');
+    pElDesc.text(task.description);
+
+    // Append Paragraph element to Card Body to display Task Description
+    cardBodyEl.append(pElDesc);
+
+    // Create element for Delete button
+    const deleteButtonEl = $('<button>');
+    deleteButtonEl.addClass('btn btn-danger btn-outline-light');
+    deleteButtonEl.text('Delete');
+
+    // Append Delete Button to Card Body El
+    cardBodyEl.append(deleteButtonEl);
+
+    // Append Card Body to Card El
+    cardEl.append(cardBodyEl);
+
+    // Get swimlane based on task status
+    if(taskStatus === 'todo'){
+        cardsSwimLaneEl = $('#todo-cards');
+    }else if(taskStatus === 'in-progress'){
+        cardsSwimLaneEl = $('#in-progress-cards');
+    }else{
+        cardsSwimLaneEl = $('#done-cards');
+    }
+
+    // Append card to respective swimlane
+    cardsSwimLaneEl.append(cardEl);
+
+    // Make cards draggable
+    $('.task-card').draggable();
 
 }
 
-// Todo: create a function to render the task list and make cards draggable
+// function to render the task list and make cards draggable
 function renderTaskList() {
 
 }
 
-// Todo: create a function to handle adding a new task
-function handleAddTask(event){
+// function to handle adding a new task
+function handleAddTask(event) {
     // Get user entered information from form fields
     const taskTitle = $('#taskTitle').val();
     const taskDueDate = $('#taskDueDate').val();
     const taskDescription = $('#taskDescription').val();
 
     // Assign id to task
-    const taskID =generateTaskId.call();
+    const taskID = generateTaskId.call();
 
     // Clear user entered form inputs
     $('#taskTitle').val('');
@@ -39,36 +122,59 @@ function handleAddTask(event){
     $('#formModal').modal('hide');
 
     // Initiate the task info object
-    const taskInfo={
-        id:taskID,
-        title:taskTitle,
-        dueDate:taskDueDate,
-        description:taskDescription,
-        status:'todo'
+    const taskInfo = {
+        id: taskID,
+        title: taskTitle,
+        dueDate: taskDueDate,
+        description: taskDescription,
+        status: 'todo'
     };
 
     // Check if taskList Array exist in localStorage
 
     const taskListArray = JSON.parse(localStorage.getItem('taskList'));
-    if(taskListArray !== null){
+    if (taskListArray !== null) {
         taskList = taskListArray;
         taskList.push(taskInfo);
-        localStorage.setItem('taskList',JSON.stringify(taskList));
-    }else{
+        localStorage.setItem('taskList', JSON.stringify(taskList));
+    } else {
         let taskList = [];
         taskList.push(taskInfo);
-        localStorage.setItem('taskList',JSON.stringify(taskList));
+        localStorage.setItem('taskList', JSON.stringify(taskList));
     }
 
-
-
-
-
+    // call createTaskCard function
+    createTaskCard(taskInfo);
 }
 
 // Todo: create a function to handle deleting a task
-function handleDeleteTask(event){
-
+function handleDeleteTask(event) {
+    // Dragged element id
+    const draggedElementId = ui.draggable.attr('data-id');
+    // Retrieve the list of tasks from localstorage
+    taskList=JSON.parse(localStorage.getItem('taskList'));
+    // Get id of dropped container where element was dragged into
+    let droppedSwimLaneEl=($(this).attr("id"));
+    for(i=0;i<taskList.length;i++){
+        const taskRef = taskList[i];
+        const id = taskRef.id;
+        if(id===draggedElementId){
+            // update status
+            taskRef.status=droppedSwimLaneEl;
+            // if dropped into done swimlane, update the card background
+            if(droppedSwimLaneEl === 'done'){
+                // find dragged element by data attribute data-id
+                const draggedElement=$(`[data-id=${draggedElementId}]`)
+                // remove class that begins with 'bg'
+                $(draggedElement).removeClass(function (index,className){
+                    return (className.match(/\bbg-\S+/g) || []).join(' ');
+                });
+                // add class bg-light
+                $(draggedElement).addClass('bg-light');
+            }
+        }
+    }
+    localStorage.setItem('taskList',JSON.stringify(taskList));
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
@@ -79,7 +185,7 @@ function handleDrop(event, ui) {
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
     // Event Listener on save button of modal dialog
-    saveTaskButtonEl.on('click',handleAddTask);
+    saveTaskButtonEl.on('click', handleAddTask);
 
 
 });

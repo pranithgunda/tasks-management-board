@@ -106,6 +106,16 @@ function createTaskCard(task) {
 
 // function to render the task list and make cards draggable
 function renderTaskList() {
+    taskList=JSON.parse(localStorage.getItem('taskList'));
+    if(taskList !== null){
+        for(let i=0;i<taskList.length;i++){
+            const task=taskList[i];
+            createTaskCard(task);
+        }
+    }
+
+    // Make cards draggable
+    $('.task-card').draggable();
 
 }
 

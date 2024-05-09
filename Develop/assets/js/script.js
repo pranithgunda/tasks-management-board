@@ -199,6 +199,27 @@ function handleDrop(event, ui) {
 
 // when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
+    // call function to render tasks
+    renderTaskList();
+
+    // Make swim lanes droppable
+
+    $('#to-do').droppable({
+        accept:".task-card",
+        drop:handleDrop
+    });
+
+    $('#in-progress').droppable({
+        accept:".task-card",
+        drop:handleDrop
+    });
+
+    $("#done").droppable({
+        accept:".task-card",
+        drop:handleDrop
+    });
+
+
     // Event Listener on save button of modal dialog
     saveTaskButtonEl.on('click', handleAddTask);
 

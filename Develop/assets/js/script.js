@@ -3,6 +3,12 @@ let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 // Get reference to Save button on Add Task Modal Dialog
 const saveTaskButtonEl = $('#add-tasks');
+// Get reference of close icon from modal dialog
+const closeButtonEl=$('.close');
+// Initiate cardsSwimLaneEl
+let cardsSwimLaneEl = '';
+// Reference of swim lanes element
+const swimLanesEl=$('.swim-lanes');
 
 // function to generate a unique task id
 function generateTaskId() {
@@ -147,8 +153,12 @@ function handleAddTask(event) {
     createTaskCard(taskInfo);
 }
 
-// Todo: create a function to handle deleting a task
+// function to handle deleting a task
 function handleDeleteTask(event) {
+
+}
+// function to handle dropping a task into a new status lane
+function handleDrop(event, ui) {
     // Dragged element id
     const draggedElementId = ui.draggable.attr('data-id');
     // Retrieve the list of tasks from localstorage
@@ -177,12 +187,7 @@ function handleDeleteTask(event) {
     localStorage.setItem('taskList',JSON.stringify(taskList));
 }
 
-// Todo: create a function to handle dropping a task into a new status lane
-function handleDrop(event, ui) {
-
-}
-
-// Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
+// when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
     // Event Listener on save button of modal dialog
     saveTaskButtonEl.on('click', handleAddTask);

@@ -15,7 +15,7 @@ body {
   cursor: grab;
 }
 
-/* Added cards to overlap and visible on swim lanes */
+/* Added cards to overlap on top of swim lane*/
 .ui-draggable{
   z-index: 100;
   opacity: 1.0;

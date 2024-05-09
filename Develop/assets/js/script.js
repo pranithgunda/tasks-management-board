@@ -165,6 +165,31 @@ function handleAddTask(event) {
 
 // function to handle deleting a task
 function handleDeleteTask(event) {
+    // Traverse DOM until card element is reached
+    const buttonEl=$(event.target)
+    const bodyEl=$(buttonEl.parent());
+    const cardEl=$(bodyEl.parent());
+
+    // Retrieve ID before removing the card
+    const cardElId=cardEl.attr('data-id');
+
+    // Remove card element
+    cardEl.remove();
+
+    // Remove the task object from localStorage array
+    taskList = JSON.parse(localStorage.getItem('taskList'));
+    if(taskList!== null){
+        for(let i=0;i<taskList.length;i++){
+            const removeTaskRef=taskList[i];
+            const arrayIndex=i;
+            if(removeTaskRef.id===cardElId){
+                taskList=taskList.filter(function(el){
+                    return el.id !== cardElId;
+                })
+                localStorage.setItem('taskList',JSON.stringify(taskList));
+            }
+        }
+    }
 
 }
 // function to handle dropping a task into a new status lane
@@ -219,9 +244,11 @@ $(document).ready(function () {
         drop:handleDrop
     });
 
-
     // Event Listener on save button of modal dialog
     saveTaskButtonEl.on('click', handleAddTask);
+
+    // Delegate event listener to parent container element '.swim-lanes'
+    swimLanesEl.on('click','.btn-danger',handleDeleteTask);
 
 
 });

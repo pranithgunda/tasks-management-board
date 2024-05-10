@@ -16,3 +16,4 @@ Tasks Management Board is a kanban board, used to manage tasks. The tasks can be
 
 ## Link to Deployed Site
 
+https://pranithgunda.github.io/tasks-management-board/

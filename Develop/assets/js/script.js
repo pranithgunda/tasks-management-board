@@ -85,7 +85,7 @@ function createTaskCard(task) {
     cardEl.append(cardBodyEl);
 
     // Get swimlane based on task status
-    if (taskStatus === 'todo') {
+    if (taskStatus === 'to-do') {
         cardsSwimLaneEl = $('#todo-cards');
     } else if (taskStatus === 'in-progress') {
         cardsSwimLaneEl = $('#in-progress-cards');
@@ -140,7 +140,7 @@ function handleAddTask(event) {
         title: taskTitle,
         dueDate: taskDueDate,
         description: taskDescription,
-        status: 'todo'
+        status: 'to-do'
     };
 
     // Check if taskList Array exist in localStorage
